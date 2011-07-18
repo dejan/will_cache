@@ -27,13 +27,18 @@ class WillCacheTest < Test::Unit::TestCase
     @user.articles << Article.new(:body => 'hey')
   end
 
-  def test_cached
-    mock(Rails.cache).fetch("User[1]#articles") { @user.articles }
+  def test_cached_on_class_method
+    mock(Rails.cache).fetch("User:count") { 1 }
+    assert_equal 1, User.cached(:count)
+  end
+
+  def test_cached_on_instance_method
+    mock(Rails.cache).fetch("User:1:articles") { @user.articles }
     assert_equal @user.articles, @user.cached(:articles)
   end
 
   def test_expire_cache
-    mock(Rails.cache).delete("User[1]#articles")
+    mock(Rails.cache).delete("User:1:articles")
     @user.expire_cache(:articles)
   end
 end

@@ -21,7 +21,11 @@ module WillCache
     end
 
     def method_cache_key(method_name, with)
-      base = "#{self.class}[#{id}]##{method_name}"
+      if self.is_a?(ActiveRecord::Base)
+        base = "#{self.class}:#{id}:#{method_name}"
+      else
+        base = "#{self}:#{method_name}"
+      end
       if with.blank?
         base
       else
