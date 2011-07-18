@@ -8,9 +8,9 @@ WillCache provides simple API for caching ActiveRecord objects that uses ActiveS
 
     >> User.last.cached(:profile)
       User Load (0.000581) (1 Row)   SELECT * FROM `users` ORDER BY users.id DESC LIMIT 1
-      Cache miss: users:65:profile
+      Cache miss: User:65:profile
       Profile Load (0.000454) (1 Row)   SELECT * FROM `profiles` WHERE (`profiles`.user_id = 65) LIMIT 1
-      Cache write (will save 1.64ms): users:65:profile
+      Cache write (will save 1.64ms): User:65:profile
     => #<Profile id: 65, first_name: nil, last_name: nil, ...>
 
 Example shows [inline log in Rails console](http://rors.org/2011/07/17/inline-logging-in-rails-console.html). 
