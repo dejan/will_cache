@@ -8,6 +8,8 @@ end
 class User < ActiveRecord::Base
   has_many :articles
   acts_as_cached
+
+  after_update :expire_cache
 end
 
 class Article < ActiveRecord::Base
@@ -41,4 +43,21 @@ class WillCacheTest < Test::Unit::TestCase
     mock(Rails.cache).delete("User:1:articles")
     @user.expire_cache(:articles)
   end
+
+  def test_expire_cache2
+    mock(Rails.cache).delete("User:1:random:2")
+    @user.expire_cache('random:2')
+  end
+
+  def test_fetch_cache
+    mock(Rails.cache).read("User:1:articles")
+    @user.fetch_cache(:articles)
+  end
+
+  def test_expire_cache_after_update
+    mock(Rails.cache).delete("User:#{@user.id}")
+    @user.name = 'dejan'
+    @user.save!
+  end
+
 end

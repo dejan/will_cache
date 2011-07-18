@@ -1,6 +1,6 @@
 module WillCache
   module Cacheable
-    def expire_cache(method_name, args = {})
+    def expire_cache(method_name = nil, args = {})
       with = args[:with]
       Rails.cache.delete(method_cache_key(method_name, with))
     end
@@ -10,6 +10,11 @@ module WillCache
       Rails.cache.fetch(method_cache_key(method_name, with)) {
         do_send(method_name, with)
       }
+    end
+
+    def fetch_cache(method_name, args = {})
+      with = args[:with]
+      Rails.cache.read(method_cache_key(method_name, with))
     end
 
     def do_send(method_name, with)
@@ -22,7 +27,7 @@ module WillCache
 
     def method_cache_key(method_name, with)
       if self.is_a?(ActiveRecord::Base)
-        base = "#{self.class}:#{id}:#{method_name}"
+        base = [self.class, id, method_name].compact.join(':').gsub(' ', '_')
       else
         base = "#{self}:#{method_name}"
       end
