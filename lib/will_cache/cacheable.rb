@@ -14,15 +14,9 @@ module WillCache
     
     def cached(method_name, args = {})
       with = args[:with]
-
-      # Rails.fetch is broken
-      # http://developingsimplicity.com/posts/rails-cache-fetch
-      key = method_cache_key(method_name, with)
-      if cache.exist?(key)
-        cache.read(key)
-      else
-        cache.write(key, do_send(method_name, with))
-      end
+      Rails.cache.fetch(method_cache_key(method_name, with)) {
+        do_send(method_name, with)
+      }
     end
     alias :caches :cached
 

@@ -30,23 +30,12 @@ class WillCacheTest < Test::Unit::TestCase
   end
 
   def test_cached_on_class_method
-    key = "User:count"
-    mock(Rails.cache).exist?(key) { false }
-    mock(Rails.cache).write(key, 1) { 1 }
+    mock(Rails.cache).fetch("User:count") { 1 }
     assert_equal 1, User.cached(:count)
   end
 
   def test_cached_on_instance_method
-    key = "User:1:articles"
-    mock(Rails.cache).exist?(key) { false }
-    mock(Rails.cache).write(key, @user.articles) { @user.articles }
-    assert_equal @user.articles, @user.cached(:articles)
-  end
-
-  def test_cached_on_instance_method_on_hit
-    key = "User:1:articles"
-    mock(Rails.cache).exist?(key) { true }
-    mock(Rails.cache).read(key) { @user.articles }
+    mock(Rails.cache).fetch("User:1:articles") { @user.articles }
     assert_equal @user.articles, @user.cached(:articles)
   end
 
