@@ -7,9 +7,15 @@ module WillCache
 
     def cached(method_name, args = {})
       with = args[:with]
-      Rails.cache.fetch(method_cache_key(method_name, with)) {
-        do_send(method_name, with)
-      }
+
+      # Rails.fetch is broken
+      # http://developingsimplicity.com/posts/rails-cache-fetch
+      key = method_cache_key(method_name, with)
+      if Rails.cache.exist?(key)
+        Rails.cache.read(key)
+      else
+        Rails.cache.write(key, do_send(method_name, with))
+      end
     end
 
     def fetch_cache(method_name, args = {})
