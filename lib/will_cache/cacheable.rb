@@ -1,8 +1,13 @@
 module WillCache
   module Cacheable
+
+    def cache
+      Rails.cache
+    end
+
     def expire_cache(method_name = nil, args = {})
       with = args[:with]
-      Rails.cache.delete(method_cache_key(method_name, with))
+      cache.delete(method_cache_key(method_name, with))
       true
     end
 
@@ -12,16 +17,24 @@ module WillCache
       # Rails.fetch is broken
       # http://developingsimplicity.com/posts/rails-cache-fetch
       key = method_cache_key(method_name, with)
-      if Rails.cache.exist?(key)
-        Rails.cache.read(key)
+      if cache.exist?(key)
+        cache.read(key)
       else
-        Rails.cache.write(key, do_send(method_name, with))
+        cache.write(key, do_send(method_name, with))
       end
     end
 
     def fetch_cache(method_name, args = {})
       with = args[:with]
-      Rails.cache.read(method_cache_key(method_name, with))
+      cache.read(method_cache_key(method_name, with))
+    end
+
+    def write_cache(key, value, ttl = nil)
+      cache.write(key, value, :expires_in => ttl)
+    end
+
+    def read_cache(key)
+      cache.read(key)
     end
 
     def do_send(method_name, with)
