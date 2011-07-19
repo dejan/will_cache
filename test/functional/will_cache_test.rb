@@ -52,12 +52,12 @@ class WillCacheTest < Test::Unit::TestCase
 
   def test_expire_cache
     mock(Rails.cache).delete("User:1:articles")
-    @user.expire_cache(:articles)
+    assert @user.expire_cache(:articles)
   end
 
   def test_expire_cache2
     mock(Rails.cache).delete("User:1:random:2")
-    @user.expire_cache('random:2')
+    assert @user.expire_cache('random:2')
   end
 
   def test_fetch_cache

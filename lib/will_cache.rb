@@ -7,6 +7,7 @@ module WillCache
 
   module ClassMethods
     include Cacheable
+
     def acts_as_cached
       send :include, InstanceMethods
     end

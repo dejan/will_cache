@@ -3,6 +3,7 @@ module WillCache
     def expire_cache(method_name = nil, args = {})
       with = args[:with]
       Rails.cache.delete(method_cache_key(method_name, with))
+      true
     end
 
     def cached(method_name, args = {})
