@@ -10,7 +10,8 @@ module WillCache
       cache.delete(method_cache_key(method_name, with))
       true
     end
-
+    alias :clear_cache :expire_cache
+    
     def cached(method_name, args = {})
       with = args[:with]
 
@@ -23,6 +24,7 @@ module WillCache
         cache.write(key, do_send(method_name, with))
       end
     end
+    alias :caches :cached
 
     def fetch_cache(method_name, args = {})
       with = args[:with]
