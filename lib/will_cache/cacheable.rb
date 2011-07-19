@@ -1,3 +1,5 @@
+require File.expand_path("../simple_memoize", __FILE__)
+
 module WillCache
   module Cacheable
 
@@ -5,6 +7,7 @@ module WillCache
       with = args[:with]
       delete_cache(method_cache_key(method_name, with))
     end
+    memoize :expire_cache
     alias :clear_cache :expire_cache
     
     def cached(method_name, args = {})
@@ -19,38 +22,36 @@ module WillCache
         write_cache(key, do_send(method_name, with))
       end
     end
+    memoize :cached
     alias :caches :cached
 
     def fetch_cache(method_name, args = {})
       with = args[:with]
       read_cache(method_cache_key(method_name, with))
     end
+    memoize :fetch_cache
 
     def write_cache(key, value)
       Rails.cache.write(key, value)
       value
     end
+    memoize :write_cache
 
     def read_cache(key)
       Rails.cache.read(key)
     end
+    memoize :read_cache
 
     def delete_cache(key)
       Rails.cache.delete(key)
       true
     end
+    memoize :delete_cache
 
     def cache_exist?(key)
       Rails.cache.exist?(key)
     end
-
-    def do_send(method_name, with)
-      if with.blank?
-        send(method_name)
-      else
-        send(method_name, with)
-      end
-    end
+    memoize :cache_exist?
 
     def method_cache_key(method_name, with)
       if self.is_a?(ActiveRecord::Base)
@@ -64,6 +65,16 @@ module WillCache
         "#{base}:#{with}"
       end
     end
+    memoize :method_cache_key
+
+    def do_send(method_name, with)
+      if with.blank?
+        send(method_name)
+      else
+        send(method_name, with)
+      end
+    end
+
   end
 end
 
