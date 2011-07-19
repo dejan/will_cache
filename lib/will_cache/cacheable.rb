@@ -56,7 +56,7 @@ module WillCache
       if with.blank?
         base
       else
-        "#{base}(#{with.inspect})"
+        "#{base}:#{with})"
       end
     end
   end
