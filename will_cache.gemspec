@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name = 'will_cache'
-  gem.version = '0.0.7'
+  gem.version = '0.0.8'
   gem.date = Date.today.to_s
 
   gem.summary = "Drop-in replacement for cache_fu that uses Rails.cache store"
