@@ -62,7 +62,7 @@ module WillCache
       if with.blank?
         base
       else
-        "#{base}:#{with}"
+        "#{base}:#{with.inspect}"
       end
     end
     memoize :method_cache_key
@@ -71,7 +71,7 @@ module WillCache
       if with.blank?
         send(method_name)
       else
-        send(method_name, with)
+        send(method_name, *with)
       end
     end
 

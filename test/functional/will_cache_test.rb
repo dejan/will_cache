@@ -1,7 +1,13 @@
 require File.expand_path('../../test_helper', __FILE__)
+require 'active_support/cache'
 
 class Rails
   def self.cache
+    @@cache
+  end
+  
+  def self.cache=(c)
+    @@cache = c
   end
 end
 
@@ -10,6 +16,10 @@ class User < ActiveRecord::Base
   acts_as_cached
 
   after_update :expire_cache
+  
+  def self.sum(a, b)
+    a + b
+  end
 end
 
 class Article < ActiveRecord::Base
@@ -27,6 +37,7 @@ class WillCacheTest < Test::Unit::TestCase
     
     @user = User.create!
     @user.articles << Article.new(:body => 'hey')
+    Rails.cache = ActiveSupport::Cache::FileStore.new('tmp')
   end
 
   def test_cached_on_class_method
@@ -34,6 +45,10 @@ class WillCacheTest < Test::Unit::TestCase
     mock(Rails.cache).exist?(key) { false }
     mock(Rails.cache).write(key, 1) { 1 }
     assert_equal 1, User.cached(:count)
+  end
+
+  def test_cached_on_class_method_with_args
+    assert_equal 5, User.cached(:sum, :with => [2, 3])
   end
 
   def test_cached_on_instance_method
