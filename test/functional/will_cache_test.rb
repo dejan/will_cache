@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 require 'active_support/cache'
-
+require 'FileUtils'
 class Rails
   def self.cache
     @@cache
@@ -37,7 +37,8 @@ class WillCacheTest < Test::Unit::TestCase
     
     @user = User.create!
     @user.articles << Article.new(:body => 'hey')
-    Rails.cache = ActiveSupport::Cache::FileStore.new('tmp')
+    FileUtils.rm_rf('tmp/cache')
+    Rails.cache = ActiveSupport::Cache::FileStore.new('tmp/cache')
   end
 
   def test_cached_on_class_method
@@ -78,6 +79,15 @@ class WillCacheTest < Test::Unit::TestCase
   def test_fetch_cache
     mock(Rails.cache).read("User:1:articles")
     @user.fetch_cache(:articles)
+  end
+
+  def test_refresh_cache
+    assert_equal 1, User.cached(:count)
+    assert_equal 1, User.fetch_cache(:count)
+    User.create!
+    assert_equal 1, User.fetch_cache(:count)
+    assert_equal 2, User.refresh_cache(:count)
+    assert_equal 2, User.fetch_cache(:count)
   end
 
   def test_expire_cache_after_update
