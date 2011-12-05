@@ -1,2 +1,4 @@
 test.sqlite3
+tmp/cache/**
+test/functional/tmp/cache/**
 TODO
